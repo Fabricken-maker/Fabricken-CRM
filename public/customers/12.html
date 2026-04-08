@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hannah Thyr - Fabricken CRM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-dark: #0a0e1a;
+            --bg-card: #141824;
+            --bg-hover: #1a1f2e;
+            --accent: #00d4ff;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-tertiary: #6e7681;
+            --border: #2a2f3a;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --info: #60a5fa;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .nav {
+            margin-bottom: 30px;
+        }
+        
+        .nav a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #00a8cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .header-item {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+        }
+        
+        .chart-title {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .project-card {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .project-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .project-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .meta-item {
+            font-size: 0.9rem;
+        }
+        
+        .meta-label {
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        .meta-value {
+            font-weight: 600;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-success { background: var(--success); color: black; }
+        .badge-warning { background: var(--warning); color: black; }
+        .badge-info { background: var(--info); color: black; }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--bg-card);
+        }
+        
+        .timeline-date {
+            color: var(--warning);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-content {
+            background: var(--bg-hover);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .interaction-item {
+            background: var(--bg-hover);
+            border-left: 3px solid var(--accent);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+        
+        .interaction-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .interaction-type {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        
+        .interaction-date {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../index.html">← Tillbaka till Dashboard</a>
+    </div>
+    
+    <div class="header">
+        <h1>Hannah Thyr</h1>
+        <div style='color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 10px;'>Sparbanken Enköping</div>
+        <div class="header-meta">
+            <div class="header-item">📧 hannah.thyr@sparbankenenkoping.se</div>
+            <div class="header-item"><span class='badge badge-success'>✅ active</span></div>
+            <div class="header-item">📅 Kund sedan 2026-03-24</div>
+        </div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value">1.6M kr</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Margin</div>
+            <div class="stat-value">67.0%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Ad Spend</div>
+            <div class="stat-value">83k kr</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Conversions</div>
+            <div class="stat-value">498</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Projekt</div>
+            <div class="stat-value">9</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Avg CTR</div>
+            <div class="stat-value">1.62%</div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-title">📊 Project Status Distribution</div>
+            <div class="chart-container">
+                <canvas id="projectChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-title">📈 Campaign Performance</div>
+            <div class="chart-container">
+                <canvas id="campaignChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">📦 Projekt</div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Fabricken Studio - Sparbanken Paket</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Månadsprenumeration: 4 filmer/mån + sociala medier-assets. Recurring 45k/mån.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">SERVICE</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">45k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">18k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">60.0%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2027-04-01</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Nära Livet Season 2 - 24 exporter</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Uppföljare till framgångsrik kampanj. 24 nya exporter planerade Q3-Q4.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">VIDEO</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">580k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">250k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">56.9%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2026-12-31</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Employer Branding Film Series</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>6 employee spotlights för rekrytering. Launch hösten.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">VIDEO</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">220k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">95k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">56.8%</span>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Nära Livet - Huvudprojekt (52 exporter)</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Offert 6 sep 2024: 52 exporter (1x lång 90-180s, 2x 30s, 6x 15s ligg, 6x 15s stå).</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">VIDEO</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">400k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">180k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">55.0%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2026-04-28</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Nära Livet - Stillbilder (104 st)</div>
+                <span class='badge badge-success'>✔️ completed</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Extra leverans: 104 stillbilder levererade 29 jan 2026.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">PHOTO</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">0.0%</span>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Nära Livet - Slutleverans v17 (18+2+12 exporter)</div>
+                <span class='badge badge-info'>📦 in_progress</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>BESLUT MÖTE 8 APR 2026: 18x 6s ads (stå+ligg), 2x 30s (Livsresan + Företaget), 12x 15s (rena från grafik), Adobe Express-mallar för självbetjäning. LEVERANS: Torsdag vecka 17 april 2026 (digitalt). STATUS: Ingår i 400k huvudprojekt (ej separat fakturering).</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">VIDEO</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">0.0%</span>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Nära Livet - Pensionsannonser (12 exporter)</div>
+                <span class='badge badge-success'>✔️ completed</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Extra leverans utanför offert: 12 exporter (8x 6s + 4x 15s). BESTÄLLNING 1 (29 jan): 4x 6s + 2x 15s (fokus pension). BESTÄLLNING 2 (10 feb): 3x 6s (flyttscen, gravid-par, magen) både ligg/stå = 6 exporter. Grafikförslag levererat men aldrig använt. RESULTAT: 6 godkända, 6 hängde i luften. STATUS: Ej fakturerat (gratis arbete).</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">VIDEO</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">0.0%</span>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Nära Livet - Stillbilder (104 st)</div>
+                <span class='badge badge-success'>✔️ completed</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Extra leverans utanför offert: 104 stillbilder levererade 29 jan 2026. STATUS: Ej fakturerat (gratis arbete?).</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">PHOTO</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">0.0%</span>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Nära Livet - Huvudprojekt (52 exporter)</div>
+                <span class='badge badge-info'>📦 in_progress</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>OFFERT 6 sep 2024: 52 exporter (1x lång 90-180s, 1x lång intern, 2x 30s, 6x 15s ligg, 6x 15s stå, 18x 6s ligg, 18x 6s stå). Filmat höst 2024. Deadline 31 mars 2026 → Överskr till vecka 17 april. PROBLEM: Scope creep, ändrade sig mellan möten, betalning i efterhand.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">VIDEO</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">400k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">0 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">100.0%</span>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <div class="section-title">💬 Senaste Interaktioner</div>
+
+        <div class="interaction-item">
+            <div class="interaction-header">
+                <div class="interaction-type">MEETING 😐</div>
+                <div class="interaction-date">2026-04-08</div>
+            </div>
+            <div><strong>Möte 8 april - Slutleverans</strong></div>
+            <div style='color: var(--text-secondary); margin-top: 5px;'>Slutleverans vecka 17. Diskuterat Adobe Express + studio-avtal.</div>
+        </div>
+
+        <div class="interaction-item">
+            <div class="interaction-header">
+                <div class="interaction-type">MEETING 😐</div>
+                <div class="interaction-date">2026-04-08</div>
+            </div>
+            <div><strong>Projektavslutsmöte - Nära Livet</strong></div>
+            <div style='color: var(--text-secondary); margin-top: 5px;'>Möte 8 apr 2026 (Hannah, Sofia, Erik, Sebastian). Beslut: 18x 6-sek ads + 2x 30-sek (Livsresan/Företaget) + 12x 15-sek rena + Adobe Express. Leverans: vecka 17 april 2026. Studio/serviceavtal diskuterat. Problem identifierade: scope creep, deadline överskr, betalningsvillkor.</div>
+        </div>
+
+    </div>
+
+    <script>
+        Chart.defaults.color = '#9aa0a6';
+        Chart.defaults.borderColor = '#2a2f3a';
+
+        // Project Status Chart
+        const projectCtx = document.getElementById('projectChart').getContext('2d');
+        new Chart(projectCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ["active", "completed", "in_progress"],
+                datasets: [{
+                    data: [4, 3, 2],
+                    backgroundColor: ['#00d4ff', '#4ade80', '#fbbf24', '#60a5fa'],
+                    borderWidth: 2,
+                    borderColor: '#141824'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+        
+        // Campaign Performance Chart
+        const campaignCtx = document.getElementById('campaignChart').getContext('2d');
+        new Chart(campaignCtx, {
+            type: 'bar',
+            data: {
+                labels: ["N\u00e4ra Livet - Brand Campai", "Sparbanken Rekrytering - "],
+                datasets: [{
+                    label: 'Conversions',
+                    data: [342, 156],
+                    backgroundColor: 'rgba(74, 222, 128, 0.8)',
+                    borderColor: '#4ade80',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#2a2f3a' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

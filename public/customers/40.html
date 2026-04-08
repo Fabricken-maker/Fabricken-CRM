@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daniel Bäck - Fabricken CRM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-dark: #0a0e1a;
+            --bg-card: #141824;
+            --bg-hover: #1a1f2e;
+            --accent: #00d4ff;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-tertiary: #6e7681;
+            --border: #2a2f3a;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --info: #60a5fa;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .nav {
+            margin-bottom: 30px;
+        }
+        
+        .nav a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #00a8cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .header-item {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+        }
+        
+        .chart-title {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .project-card {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .project-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .project-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .meta-item {
+            font-size: 0.9rem;
+        }
+        
+        .meta-label {
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        .meta-value {
+            font-weight: 600;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-success { background: var(--success); color: black; }
+        .badge-warning { background: var(--warning); color: black; }
+        .badge-info { background: var(--info); color: black; }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--bg-card);
+        }
+        
+        .timeline-date {
+            color: var(--warning);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-content {
+            background: var(--bg-hover);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .interaction-item {
+            background: var(--bg-hover);
+            border-left: 3px solid var(--accent);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+        
+        .interaction-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .interaction-type {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        
+        .interaction-date {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../index.html">← Tillbaka till Dashboard</a>
+    </div>
+    
+    <div class="header">
+        <h1>Daniel Bäck</h1>
+        <div style='color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 10px;'>TeeBox</div>
+        <div class="header-meta">
+            <div class="header-item">📧 daniel@teebox.se</div>
+            <div class="header-item"><span class='badge badge-success'>✅ active</span></div>
+            <div class="header-item">📅 Kund sedan 2026-04-08</div>
+        </div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value">175k kr</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Margin</div>
+            <div class="stat-value">61.4%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Ad Spend</div>
+            <div class="stat-value">76k kr</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Conversions</div>
+            <div class="stat-value">633</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Projekt</div>
+            <div class="stat-value">8</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Avg CTR</div>
+            <div class="stat-value">2.34%</div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-title">📊 Project Status Distribution</div>
+            <div class="chart-container">
+                <canvas id="projectChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-title">📈 Campaign Performance</div>
+            <div class="chart-container">
+                <canvas id="campaignChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">📦 Projekt</div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Admiral Suite - TeeBox + Academy + Golfresor</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Helautomatiserad Meta Ads-hantering för 3 varumärken. 6 kampanjer live, daglig optimering.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">SERVICE</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">8k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">2k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">81.2%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2027-03-01</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">TeeBox Brand Campaign Q2</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>12 videoads + landningssida + A/B-testing.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">MARKETING</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">35k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">14k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">60.0%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2026-06-30</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Academy Summer Launch</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Golf academy sommarlansering. 18 ads + email-sekvens.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">MARKETING</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">42k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">17k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">60.0%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2026-08-31</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Golfresor Spanien Hösten 2026</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>15 videoads + booking funnel. Launch augusti.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">MARKETING</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">48k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">19k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">60.0%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2026-11-30</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Aimpoint Express - 9 Video Ads</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>9 videoads för Aimpoint Express kampanj (Meta Ads). Launch vecka 16.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">MARKETING</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">18k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">7k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">60.0%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2026-04-21</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Golfresor Grekland - 9 Video Ads</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Golfresor Grekland sommaren 2026. 9 videoads + landningssida.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">MARKETING</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">18k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">7k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">60.0%</span>
+                </div>
+                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2026-05-15</span></div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Admiral - Meta Ads Automation</div>
+                <span class='badge badge-success'>✅ active</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Recurring Meta Ads automation dashboard (3000 kr/mån, 50% testkund-rabatt).</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">SERVICE</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">3k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">500 kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">83.3%</span>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title">Aimpoint Landningssida</div>
+                <span class='badge badge-success'>✔️ completed</span>
+            </div>
+            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Landningssida för Aimpoint Express kampanj.</div>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Typ</span>
+                    <span class="meta-value">WEB</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Pris</span>
+                    <span class="meta-value" style="color: var(--success)">3k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kostnad</span>
+                    <span class="meta-value">1k kr</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Margin</span>
+                    <span class="meta-value">60.0%</span>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <div class="section-title">💬 Senaste Interaktioner</div>
+
+        <div class="interaction-item">
+            <div class="interaction-header">
+                <div class="interaction-type">EMAIL 😊</div>
+                <div class="interaction-date">2026-04-08</div>
+            </div>
+            <div><strong>Godkännande Aimpoint Creative</strong></div>
+            <div style='color: var(--text-secondary); margin-top: 5px;'>Daniel godkände 6/9 creatives. Minor ändringar på 3 st.</div>
+        </div>
+
+        <div class="interaction-item">
+            <div class="interaction-header">
+                <div class="interaction-type">EMAIL 😊</div>
+                <div class="interaction-date">2026-04-08</div>
+            </div>
+            <div><strong>Godkännande Aimpoint Creative</strong></div>
+            <div style='color: var(--text-secondary); margin-top: 5px;'>Daniel godkände 6/9 creatives. Minor ändringar på 3 st.</div>
+        </div>
+
+        <div class="interaction-item">
+            <div class="interaction-header">
+                <div class="interaction-type">MEETING 😐</div>
+                <div class="interaction-date">2026-04-05</div>
+            </div>
+            <div><strong>Kick-off Aimpoint kampanj</strong></div>
+            <div style='color: var(--text-secondary); margin-top: 5px;'>Diskuterade kreativa riktningar och målgrupper.</div>
+        </div>
+
+    </div>
+
+    <script>
+        Chart.defaults.color = '#9aa0a6';
+        Chart.defaults.borderColor = '#2a2f3a';
+
+        // Project Status Chart
+        const projectCtx = document.getElementById('projectChart').getContext('2d');
+        new Chart(projectCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ["active", "completed"],
+                datasets: [{
+                    data: [7, 1],
+                    backgroundColor: ['#00d4ff', '#4ade80', '#fbbf24', '#60a5fa'],
+                    borderWidth: 2,
+                    borderColor: '#141824'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+        
+        // Campaign Performance Chart
+        const campaignCtx = document.getElementById('campaignChart').getContext('2d');
+        new Chart(campaignCtx, {
+            type: 'bar',
+            data: {
+                labels: ["Academy - Interest Target", "TeeBox - Brand Awareness", "Academy - Lookalike 1%", "TeeBox - Retargeting Warm", "Golfresor Spanien - Early"],
+                datasets: [{
+                    label: 'Conversions',
+                    data: [203, 156, 134, 98, 42],
+                    backgroundColor: 'rgba(74, 222, 128, 0.8)',
+                    borderColor: '#4ade80',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#2a2f3a' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
