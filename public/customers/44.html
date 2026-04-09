@@ -289,128 +289,38 @@
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-label">Total Revenue</div>
-            <div class="stat-value">28k kr</div>
+            <div class="stat-value">0 kr</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Margin</div>
-            <div class="stat-value">60.0%</div>
+            <div class="stat-value">0.0%</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Ad Spend</div>
-            <div class="stat-value">32k kr</div>
+            <div class="stat-value">0 kr</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Conversions</div>
-            <div class="stat-value">298</div>
+            <div class="stat-value">0</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Projekt</div>
-            <div class="stat-value">1</div>
+            <div class="stat-value">0</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Avg CTR</div>
-            <div class="stat-value">2.09%</div>
-        </div>
-    </div>
-
-    <div class="charts-grid">
-        <div class="chart-card">
-            <div class="chart-title">📊 Project Status Distribution</div>
-            <div class="chart-container">
-                <canvas id="projectChart"></canvas>
-            </div>
-        </div>
-        
-        <div class="chart-card">
-            <div class="chart-title">📈 Campaign Performance</div>
-            <div class="chart-container">
-                <canvas id="campaignChart"></canvas>
-            </div>
+            <div class="stat-value">0.00%</div>
         </div>
     </div>
 
     <div class="section">
         <div class="section-title">📦 Projekt</div>
 
-        <div class="project-card">
-            <div class="project-header">
-                <div class="project-title">FitLife - Video Content Package</div>
-                <span class='badge badge-success'>✅ active</span>
-            </div>
-            <div style='color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;'>Recurring: 8 videos/mån för 4 gym. Sociala medier + ads.</div>
-            <div class="project-meta">
-                <div class="meta-item">
-                    <span class="meta-label">Typ</span>
-                    <span class="meta-value">VIDEO</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Pris</span>
-                    <span class="meta-value" style="color: var(--success)">28k kr</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Kostnad</span>
-                    <span class="meta-value">11k kr</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Margin</span>
-                    <span class="meta-value">60.0%</span>
-                </div>
-                <div class="meta-item"><span class="meta-label">Deadline</span><span class="meta-value">2027-12-01</span></div>
-            </div>
-        </div>
-
     </div>
 
     <script>
         Chart.defaults.color = '#9aa0a6';
         Chart.defaults.borderColor = '#2a2f3a';
-
-        // Project Status Chart
-        const projectCtx = document.getElementById('projectChart').getContext('2d');
-        new Chart(projectCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ["active"],
-                datasets: [{
-                    data: [1],
-                    backgroundColor: ['#00d4ff', '#4ade80', '#fbbf24', '#60a5fa'],
-                    borderWidth: 2,
-                    borderColor: '#141824'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
-            }
-        });
-        
-        // Campaign Performance Chart
-        const campaignCtx = document.getElementById('campaignChart').getContext('2d');
-        new Chart(campaignCtx, {
-            type: 'bar',
-            data: {
-                labels: ["FitLife - Membership Driv"],
-                datasets: [{
-                    label: 'Conversions',
-                    data: [298],
-                    backgroundColor: 'rgba(74, 222, 128, 0.8)',
-                    borderColor: '#4ade80',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: '#2a2f3a' } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
 
     </script>
 </body>
