@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getinge - Fabricken CRM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-dark: #0a0e1a;
+            --bg-card: #141824;
+            --bg-hover: #1a1f2e;
+            --accent: #00d4ff;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-tertiary: #6e7681;
+            --border: #2a2f3a;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --info: #60a5fa;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .nav {
+            margin-bottom: 30px;
+        }
+        
+        .nav a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #00a8cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .contact-card {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+        
+        .contact-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .contact-badge {
+            background: var(--success);
+            color: black;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .contact-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .detail-item {
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.85rem;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+        }
+        
+        .contact-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--accent);
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .contact-link:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+        
+        .project-card {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .project-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .project-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .project-badge {
+            background: var(--warning);
+            color: black;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .project-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+            display: none;
+        }
+        
+        .project-card.expanded .project-details {
+            display: grid;
+        }
+        
+        .detail-item {
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.85rem;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+        }
+        
+        .interaction-item {
+            background: var(--bg-hover);
+            border-left: 3px solid var(--accent);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+        
+        .interaction-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .interaction-type {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        
+        .interaction-date {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../index.html">← Tillbaka till Dashboard</a>
+    </div>
+    
+    <div class="header">
+        <h1>Getinge</h1>
+        <div style='color: var(--text-secondary); font-size: 1rem; margin-bottom: 10px;'>Getinge</div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value">822k kr</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Margin</div>
+            <div class="stat-value">60.0%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Ad Spend</div>
+            <div class="stat-value">88k kr</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Conversions</div>
+            <div class="stat-value">540</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Projekt</div>
+            <div class="stat-value">3</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Contacts</div>
+            <div class="stat-value">2</div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">👥 Kontakter</div>
+
+        <div class="contact-card">
+            <div class="contact-header">
+                <div class="contact-name">Marianne Gerdin <span class="contact-badge">PRIMARY</span></div>
+            </div>
+            <div class="contact-details">
+                <div class="detail-item"><span class="detail-label">📧 Email</span><span class="detail-value"><a href="mailto:marianne.gerdin@getinge.com" style="color: var(--accent); text-decoration: none;">marianne.gerdin@getinge.com</a></span></div>
+                
+                
+            </div>
+</div>
+        <div class="contact-card">
+            <div class="contact-header">
+                <div class="contact-name">Paula Henstrand <span class="contact-badge">PRIMARY</span></div>
+            </div>
+            <div class="contact-details">
+                <div class="detail-item"><span class="detail-label">📧 Email</span><span class="detail-value"><a href="mailto:paula.henstrand@getinge.com" style="color: var(--accent); text-decoration: none;">paula.henstrand@getinge.com</a></span></div>
+                <div class="detail-item"><span class="detail-label">📱 Telefon</span><span class="detail-value"><a href="tel:+46 70 782 73 90" style="color: var(--accent); text-decoration: none;">+46 70 782 73 90</a></span></div>
+                
+            </div>
+<div class="contact-links"><a href="https://www.linkedin.com/in/paula-henstrand/" target="_blank" class="contact-link">🔗 LinkedIn</a><a href="https://instagram.com/paula.henstrand" target="_blank" class="contact-link">📸 Instagram</a></div></div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">📦 Projekt (klicka för detaljer)</div>
+
+        <div class="project-card" onclick="this.classList.toggle('expanded')">
+            <div class="project-header">
+                <div class="project-title">🎬 E-Learning Suite - Ongoing</div>
+                <span class="project-badge">✅ ACTIVE</span>
+            </div>
+            <div style="color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;">Recurring: 2 filmer/mån. 32k/mån. AI-röst + presentatör.</div>
+            <div class="project-details">
+                <div class="detail-item">
+                    <span class="detail-label">Pris</span>
+                    <span class="detail-value" style="color: var(--success)">384k kr</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Kostnad</span>
+                    <span class="detail-value">154k kr</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Margin</span>
+                    <span class="detail-value">60.0%</span>
+                </div>
+                <div class="detail-item"><span class="detail-label">Start</span><span class="detail-value">2026-04-01</span></div>
+                <div class="detail-item"><span class="detail-label">Deadline</span><span class="detail-value">2027-04-01</span></div>
+            </div>
+        </div>
+
+        <div class="project-card" onclick="this.classList.toggle('expanded')">
+            <div class="project-header">
+                <div class="project-title">📢 Product Launch - Global</div>
+                <span class="project-badge">✅ ACTIVE</span>
+            </div>
+            <div style="color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;">Global lansering. 20 ads på 8 språk.</div>
+            <div class="project-details">
+                <div class="detail-item">
+                    <span class="detail-label">Pris</span>
+                    <span class="detail-value" style="color: var(--success)">385k kr</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Kostnad</span>
+                    <span class="detail-value">154k kr</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Margin</span>
+                    <span class="detail-value">60.0%</span>
+                </div>
+                <div class="detail-item"><span class="detail-label">Start</span><span class="detail-value">2026-06-01</span></div>
+                <div class="detail-item"><span class="detail-label">Deadline</span><span class="detail-value">2026-09-30</span></div>
+            </div>
+        </div>
+
+        <div class="project-card" onclick="this.classList.toggle('expanded')">
+            <div class="project-header">
+                <div class="project-title">🎬 Surgical Workflows E-Learning</div>
+                <span class="project-badge">✅ ACTIVE</span>
+            </div>
+            <div style="color: var(--text-tertiary); font-size: 0.9rem; margin: 10px 0;">AI-röst + presentatör. Feedbackloop aktiv.</div>
+            <div class="project-details">
+                <div class="detail-item">
+                    <span class="detail-label">Pris</span>
+                    <span class="detail-value" style="color: var(--success)">53k kr</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Kostnad</span>
+                    <span class="detail-value">21k kr</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Margin</span>
+                    <span class="detail-value">60.5%</span>
+                </div>
+                <div class="detail-item"><span class="detail-label">Start</span><span class="detail-value">2026-03-15</span></div>
+                <div class="detail-item"><span class="detail-label">Deadline</span><span class="detail-value">2026-04-30</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <div class="section-title">💬 Senaste Interaktioner</div>
+
+        <div class="interaction-item">
+            <div class="interaction-header">
+                <div class="interaction-type">EMAIL</div>
+                <div class="interaction-date">2026-04-12</div>
+            </div>
+            <div><strong>AI-presentatör approved</strong></div>
+            <div style='color: var(--text-secondary); margin-top: 5px;'>Paula: Älskar AI-presentatören! Godkänd. Fortsätter produktion.</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Project expand/collapse handled by CSS + onclick
+    </script>
+</body>
+</html>
