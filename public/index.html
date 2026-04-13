@@ -307,12 +307,12 @@
         </div>
         <div class="stat-card">
             <div class="stat-label">Pågående Projekt</div>
-            <div class="stat-value">4</div>
+            <div class="stat-value">16</div>
             <div class="stat-sublabel">Active Projects</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Pipeline</div>
-            <div class="stat-value">122k kr</div>
+            <div class="stat-value">3.6M kr</div>
             <div class="stat-sublabel">Active + Proposed</div>
         </div>
         <div class="stat-card">
@@ -322,7 +322,7 @@
         </div>
         <div class="stat-card">
             <div class="stat-label">Ad Spend</div>
-            <div class="stat-value">427k kr</div>
+            <div class="stat-value">336k kr</div>
             <div class="stat-sublabel">Total Campaign Spend</div>
         </div>
     </div>
@@ -330,14 +330,6 @@
     <div class="customer-nav">
         <div class="nav-title">🏢 Kunder (klicka för detaljer)</div>
         <div class="customer-list">
-
-            <a href="customers/23.html" class="customer-item">
-                <div class="customer-info">
-                    <div class="customer-name">Daniel Bäck</div>
-                    <span style='color: var(--text-tertiary); font-size: 0.85rem;'>TeeBox / Academy / Golfresor</span><br>
-                </div>
-                <div class="customer-value">42k kr</div>
-            </a>
 
             <a href="customers/45.html" class="customer-item">
                 <div class="customer-info">
@@ -383,6 +375,14 @@
                 <div class="customer-info">
                     <div class="customer-name">Paula Henstrand</div>
                     <span style='color: var(--text-tertiary); font-size: 0.85rem;'>Getinge</span><br>
+                </div>
+                <div class="customer-value">N/A</div>
+            </a>
+
+            <a href="customers/23.html" class="customer-item">
+                <div class="customer-info">
+                    <div class="customer-name">Daniel Bäck</div>
+                    <span style='color: var(--text-tertiary); font-size: 0.85rem;'>TeeBox / Academy / Golfresor</span><br>
                 </div>
                 <div class="customer-value">N/A</div>
             </a>
@@ -447,70 +447,10 @@
     <div class="timeline">
         <div class="chart-title">📅 Project Timeline (Next 15)</div>
 
-        <div class="timeline-item">
-            <div class="timeline-date">📅 2026-06-08</div>
-            <div class="timeline-content">
-                <div class="timeline-title">Admiral (Meta Ads Automation)</div>
-                <div class="timeline-meta">Daniel Bäck</div>
-            </div>
-            <div class="timeline-price">3k kr</div>
-            <span class="badge badge-warning">active</span>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-date">📅 2026-06-08</div>
-            <div class="timeline-content">
-                <div class="timeline-title">Golfresor Kampanj (9 videos + landningssida)</div>
-                <div class="timeline-meta">Daniel Bäck</div>
-            </div>
-            <div class="timeline-price">18k kr</div>
-            <span class="badge badge-warning">active</span>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-date">📅 2026-06-08</div>
-            <div class="timeline-content">
-                <div class="timeline-title">Aimpoint Landningssida</div>
-                <div class="timeline-meta">Daniel Bäck</div>
-            </div>
-            <div class="timeline-price">3k kr</div>
-            <span class="badge badge-warning">active</span>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-date">📅 2026-06-08</div>
-            <div class="timeline-content">
-                <div class="timeline-title">DB Golf Academy Platform</div>
-                <div class="timeline-meta">Daniel Bäck</div>
-            </div>
-            <div class="timeline-price">75k kr</div>
-            <span class="badge badge-info">proposed</span>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-date">📅 2026-06-08</div>
-            <div class="timeline-content">
-                <div class="timeline-title">Adobe Express-mallar</div>
-                <div class="timeline-meta">Hannah Thyr</div>
-            </div>
-            <div class="timeline-price">4k kr</div>
-            <span class="badge badge-info">proposed</span>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-date">📅 2026-04-20</div>
-            <div class="timeline-content">
-                <div class="timeline-title">Aimpoint Kampanj (9 videos + landningssida)</div>
-                <div class="timeline-meta">Daniel Bäck</div>
-            </div>
-            <div class="timeline-price">18k kr</div>
-            <span class="badge badge-warning">active</span>
-        </div>
-
     </div>
     
     <div class="updated">
-        Senast uppdaterad: 2026-04-09 12:40:46
+        Senast uppdaterad: 2026-04-13 09:41:02
     </div>
     
     <script>
@@ -523,9 +463,9 @@
         new Chart(revenueCtx, {
             type: 'doughnut',
             data: {
-                labels: ["marketing_campaign", "web_development", "ads_automation", "video", "photo"],
+                labels: ["video", "marketing", "service"],
                 datasets: [{
-                    data: [36000.0, 3000.0, 3000.0, 0.0, 0.0],
+                    data: [1393200.0, 807000.0, 726000.0],
                     backgroundColor: [
                         '#00d4ff',
                         '#4ade80',
@@ -567,10 +507,10 @@
         new Chart(customersCtx, {
             type: 'bar',
             data: {
-                labels: ["Daniel B\u00e4ck"],
+                labels: [],
                 datasets: [{
                     label: 'Total Value (kr)',
-                    data: [42000.0],
+                    data: [],
                     backgroundColor: 'rgba(0, 212, 255, 0.8)',
                     borderColor: '#00d4ff',
                     borderWidth: 1
