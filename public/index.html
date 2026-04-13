@@ -279,6 +279,20 @@
             font-size: 0.95rem;
         }
         
+        #searchInput {
+            font-size: 0.95rem;
+        }
+        
+        #searchInput::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        #searchInput:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+        }
+        
         .updated {
             text-align: center;
             color: var(--text-tertiary);
@@ -329,7 +343,11 @@
     
     <div class="customer-nav">
         <div class="nav-title">🏢 Kunder (klicka för detaljer)</div>
-        <div class="customer-list">
+        <div style="margin-bottom: 20px;">
+            <input type="text" id="searchInput" placeholder="🔍 Sök organisation eller kontakt..." 
+                   style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-hover); color: var(--text-primary); font-size: 0.95rem;">
+        </div>
+        <div class="customer-list" id="customerList">
 
             <a href="organizations/5.html" class="customer-item">
                 <div class="customer-info">
@@ -398,6 +416,29 @@
         </div>
     </div>
     
+    <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const customerList = document.getElementById('customerList');
+        const customerItems = Array.from(customerList.querySelectorAll('.customer-item'));
+        
+        searchInput.addEventListener('keyup', function() {
+            const query = this.value.toLowerCase();
+            
+            customerItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (query === '' || text.includes(query)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // Auto-focus search box
+        searchInput.focus();
+    </script>
+    
     <div class="charts-grid">
         <div class="chart-card">
             <div class="chart-title">🎯 Revenue by Type</div>
@@ -434,7 +475,7 @@
     </div>
     
     <div class="updated">
-        Senast uppdaterad: 2026-04-13 09:49:42
+        Senast uppdaterad: 2026-04-13 09:51:08
     </div>
     
     <script>
